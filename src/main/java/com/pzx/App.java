@@ -1,5 +1,8 @@
 package com.pzx;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 /**
  * Hello world!
  *
@@ -11,7 +14,7 @@ public class App
 
         Integer[] ints = new Integer[10];
         Object[] objects = ints;
-        objects[0] = "da";
+
 
     }
 }
