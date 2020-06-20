@@ -1,5 +1,7 @@
 package com.pzx.algorithm;
 
+import javafx.util.Pair;
+
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -139,49 +141,57 @@ public class PostfixExpression {
 
     /**
      * 后缀表达式转为中缀表达式
+     * 算法描述：
+     * 1.遍历后续表达式
+     * 2.遇到操作数，则创建Pair（expression，operator），将表达式和操作符组成一个单元入栈。对于操作数来说，表达式为本身，操作符为空字符串
+     * 3.遇到操作符，执行两次出栈操作（先出栈的为被操作数）。判断出栈的元素Pair中储存的操作符的优先级是否小于当前操作符，若小于，则将Pair中的表达式两边加括号。
+     * 4.将加括号处理之后的两个表达式用当前操作符连接，构造新的Pair对象（新的表达式，当前操作符），入栈。
+     * 5.遍历结束后，进行出栈操作获取中缀表达式。
      *
      * @param postfixExpression
      * @return
      */
     private static String postfix2Infix(List<String> postfixExpression){
-        /*
+
         Map<String, Integer> operatorPriority = new HashMap<>();
         operatorPriority.put("+",1);
         operatorPriority.put("-",1);
         operatorPriority.put("*",2);
         operatorPriority.put("/",2);
 
-        Deque<String> stack = new LinkedList<>();
-        String infixExpression = "";
-        String lastOperator = null;
+        Deque<Pair<String,String>> stack = new LinkedList<>();
         for(String element : postfixExpression){
             if(operatorPriority.containsKey(element)){
-                String secondOperatorNumber = stack.pop();
-                String fistOperatorNumber = stack.pop();
-                if(lastOperator != null && operatorPriority.get(element) > operatorPriority.get(lastOperator)){
-                    infixExpression = fistOperatorNumber + element + "(" + secondOperatorNumber + ")";
-                }else {
-                    infixExpression = fistOperatorNumber + element + secondOperatorNumber;
+                Pair<String,String> secondOperatorPair = stack.pop();
+                Pair<String,String> fistOperatorPair = stack.pop();
+                String secondOperatorNumber = secondOperatorPair.getKey();
+                String fistOperatorNumber = fistOperatorPair.getKey();
+
+                if (operatorPriority.getOrDefault(fistOperatorPair.getValue(),3) < operatorPriority.get(element)){
+                    fistOperatorNumber = "(" + fistOperatorNumber + ")";
                 }
-                stack.push(infixExpression);
-                lastOperator = element;
+                if (operatorPriority.getOrDefault(secondOperatorPair.getValue(),3) < operatorPriority.get(element)){
+                    secondOperatorNumber = "(" + secondOperatorNumber + ")";
+                }
+
+                stack.push(new Pair<>(fistOperatorNumber + element + secondOperatorNumber, element));
             }else {
-                stack.push(element);
+                stack.push(new Pair<>(element,""));//空字符串代表单个操作数，无操作符。
             }
         }
-        return stack.pop();
-
-         */
-        return null;
+        return stack.pop().getKey();
     }
 
     public static void main(String[] args) {
         System.out.println(calculatePostfixExpression(infix2Postfix(resolveInfixExpressionStr("4+3*3-6/3+(7-3)*2-3*4/2+3"))));
-        System.out.println(infix2Postfix(resolveInfixExpressionStr("4+3*3-6/3+(7-3)*2-3*4/2+3")));
+        System.out.println(postfix2Infix(infix2Postfix(resolveInfixExpressionStr("4+3*3-6/3+(7-3)*2-3*4/2+3"))));
     }
 
     /**
      * 将字符串表达式解析为字符串数组
+     * 1.遍历字符串，当遇到操作符时，将遇到的上一个操作符和当前操作符之间的字符串提取，存入结果列表。
+     * 2.将当前操作符也存入结果列表。更改遇到的上一个操作符位置为当前位置。
+     * 3.遍历结束后，将遇到的最后一个操作符之后的字符串存入列表。
      * @param infixExpressionStr
      * @return
      */
