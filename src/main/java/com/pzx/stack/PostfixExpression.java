@@ -1,4 +1,4 @@
-package com.pzx.algorithm;
+package com.pzx.stack;
 
 import javafx.util.Pair;
 
