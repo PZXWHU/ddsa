@@ -77,13 +77,13 @@ public class PostfixExpression {
         operatorPriority.put("-",1);
         operatorPriority.put("*",2);
         operatorPriority.put("/",2);
-        operatorPriority.put("(",3);
 
         List<String> postfixExpression = new ArrayList<>();
         Deque<String> stack = new LinkedList<>();
         for(String element : infixExpression){
-            if(element.equals("+")||element.equals("-")||element.equals("*")||element.equals("/")){
-                while (!stack.isEmpty() && !stack.peek().equals("(") && operatorPriority.get(stack.peek()) >=  operatorPriority.get(element)){
+            if(operatorPriority.containsKey(element)){
+                while (!stack.isEmpty() && !stack.peek().equals("(")
+                        && operatorPriority.get(stack.peek()) >=  operatorPriority.get(element)){
                     postfixExpression.add(stack.pop());
                 }
                 stack.push(element);
@@ -124,10 +124,10 @@ public class PostfixExpression {
 
         Deque<Double> stack = new LinkedList<>();
         for(String element : postfixExpression){
-            if(element.equals("+")||element.equals("-")||element.equals("*")||element.equals("/")){
-                double secondOperatorNum = stack.pop();
-                double fistOperatorNum = stack.pop();
-                double tmp =  operator.get(element).apply(fistOperatorNum, secondOperatorNum);
+            if(operator.containsKey(element)){
+                double secondOperatorNumber = stack.pop();
+                double fistOperatorNumber = stack.pop();
+                double tmp =  operator.get(element).apply(fistOperatorNumber, secondOperatorNumber);
                 stack.push(tmp);
             }else {
                 stack.push(Double.parseDouble(element));
@@ -137,8 +137,47 @@ public class PostfixExpression {
 
     }
 
+    /**
+     * 后缀表达式转为中缀表达式
+     *
+     * @param postfixExpression
+     * @return
+     */
+    private static String postfix2Infix(List<String> postfixExpression){
+        /*
+        Map<String, Integer> operatorPriority = new HashMap<>();
+        operatorPriority.put("+",1);
+        operatorPriority.put("-",1);
+        operatorPriority.put("*",2);
+        operatorPriority.put("/",2);
+
+        Deque<String> stack = new LinkedList<>();
+        String infixExpression = "";
+        String lastOperator = null;
+        for(String element : postfixExpression){
+            if(operatorPriority.containsKey(element)){
+                String secondOperatorNumber = stack.pop();
+                String fistOperatorNumber = stack.pop();
+                if(lastOperator != null && operatorPriority.get(element) > operatorPriority.get(lastOperator)){
+                    infixExpression = fistOperatorNumber + element + "(" + secondOperatorNumber + ")";
+                }else {
+                    infixExpression = fistOperatorNumber + element + secondOperatorNumber;
+                }
+                stack.push(infixExpression);
+                lastOperator = element;
+            }else {
+                stack.push(element);
+            }
+        }
+        return stack.pop();
+
+         */
+        return null;
+    }
+
     public static void main(String[] args) {
-        System.out.println(calculatePostfixExpression(infix2Postfix(resolveInfixExpressionStr("4+3*3-6/3+7-3*2"))));
+        System.out.println(calculatePostfixExpression(infix2Postfix(resolveInfixExpressionStr("4+3*3-6/3+(7-3)*2-3*4/2+3"))));
+        System.out.println(infix2Postfix(resolveInfixExpressionStr("4+3*3-6/3+(7-3)*2-3*4/2+3")));
     }
 
     /**
