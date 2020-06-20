@@ -196,15 +196,19 @@ public class PostfixExpression {
      * @return
      */
     private static List<String> resolveInfixExpressionStr(String infixExpressionStr){
+
+        Set<String> operatorSet = new HashSet<>();
+        operatorSet.addAll(Arrays.asList("+","-","*","/","(",")"));
         infixExpressionStr = infixExpressionStr.replaceAll(" ","");//去除所有空格
         List<String> infixExpression = new ArrayList<>();
         int lastOperatorIndex = -1;
+
         for(int i = 0; i< infixExpressionStr.length(); i++){
-            char c = infixExpressionStr.charAt(i);
-            if (c=='+' || c=='-' || c=='*' || c=='/' || c=='(' || c== ')'){
+            String c = infixExpressionStr.substring(i, i+1);
+            if (operatorSet.contains(c)){
                 if (lastOperatorIndex != i-1)//防止括号操作符和运算符邻接导致插入空字符串
                     infixExpression.add(infixExpressionStr.substring(lastOperatorIndex + 1, i));
-                infixExpression.add(c + "");
+                infixExpression.add(c);
                 lastOperatorIndex = i;
             }
         }
