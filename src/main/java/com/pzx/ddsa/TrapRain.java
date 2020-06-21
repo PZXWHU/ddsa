@@ -1,4 +1,4 @@
-package com.pzx.algorithm;
+package com.pzx.ddsa;
 
 import java.util.*;
 

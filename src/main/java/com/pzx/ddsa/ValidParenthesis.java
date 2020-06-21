@@ -1,4 +1,4 @@
-package com.pzx.stack;
+package com.pzx.ddsa;
 
 import java.util.Deque;
 import java.util.HashMap;
