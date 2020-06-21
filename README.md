@@ -6,3 +6,4 @@
 - TrapRain 接雨水问题（一维、二维）
 - PostfixExpression  后缀表达式问题（中缀转后缀、后缀转前缀、后缀表达式计算）
 - ValidParenthesis  有效括号问题
+- SimplifyPath 绝对路径简化问题
