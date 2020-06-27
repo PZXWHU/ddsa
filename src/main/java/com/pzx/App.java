@@ -12,7 +12,7 @@ public class App
     public static void main( String[] args )
     {
 
-        Map
+
     }
 
     public  static class A{

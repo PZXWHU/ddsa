@@ -4,9 +4,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 最大子序列和问题
- * 问题描述：给定整数数组（元素可能为负，求最大的子序列和，如果全为负数，则输出0）
+ * 问题描述：给定整数数组（元素可能为负，求最大的子序列和）
  * 例如：输入-2，11，-4，13，-5，-2  输入20（从11到13）
  *
+ * 最大子矩阵和问题
+ * 问题描述：给定二维数组，找到其中最大的子矩阵和
+ * Input: matrix = [[1,0,1],[0,-2,3]]   output： 4
  * @author PZX
  * 2020.6.19
  */
@@ -43,7 +46,7 @@ public class MaxSubSequenceSum {
         int rightArrayMaxSum = MaxSubSequenceSumRec(inputArray, center+1, right);
 
         //求包括左半边数组最后一个元素的最大子序列和
-        int currentSum = 0; int leftHalfMaxSum = 0;
+        int currentSum = 0; int leftHalfMaxSum = inputArray[center];
         for(int i = center; i>=left; i--){
             currentSum += inputArray[i];
             if(currentSum > leftHalfMaxSum){
@@ -52,7 +55,7 @@ public class MaxSubSequenceSum {
         }
 
         //求包括右半边数组第一个元素的最大子序列和
-        currentSum = 0;int rightHalfMaxSum = 0;
+        currentSum = 0;int rightHalfMaxSum = inputArray[center+1];
         for(int i = center + 1; i<=right; i++){
             currentSum += inputArray[i];
             if(currentSum > rightHalfMaxSum){
@@ -84,37 +87,83 @@ public class MaxSubSequenceSum {
      * @return
      */
     private static int MaxSubSequenceSumLin(int[] inputArray){
+        if(inputArray.length==0)
+            return 0;
 
-        //int head = 0; int tail = -1;int currentHead = 0; //需要输出最大子序列时使用
-        int maxSum = 0;int currentSum = 0;
+        int maxSum = inputArray[0];int currentSum = 0;
         for(int i = 0; i < inputArray.length; i++){
             currentSum += inputArray[i];
             if (currentSum > maxSum){
                 maxSum = currentSum;
-                //head = currentHead;//移动头指针
-                //tail = i;//移动尾指针 //移动尾指针
             }else if (currentSum <= 0){
                 currentSum = 0;
-                //currentHead = i + 1;
             }
         }
-
-        /*
-        for(int i = head; i<=tail; i++){
-            System.out.print(inputArray[i] + " ");
-        }
-         */
-
         return maxSum;
     }
+
+    /**
+     * 动态规划思想，本质上和上一个方法相同
+     * 算法思想：
+     * 设数组maxEndWithCurrentElement[],表示以当前元素结尾的最大子序列和
+     * maxEndWithCurrentElement[i] = Math.max(maxEndWithCurrentElement[i-1] + currentElement,currentElement)
+     * 最大子序列和就是数组maxEndWithCurrentElement[]中的最大值
+     * @param inputArray
+     * @return
+     */
+    private static int MaxSubSequenceSumDP(int[] inputArray){
+        if(inputArray.length==0)
+            return 0;
+        int result = inputArray[0];int maxEndWithCurrentElement = 0;//以当前元素结尾的最大子序列和。
+        for(int currentElement : inputArray){
+            maxEndWithCurrentElement = Math.max(maxEndWithCurrentElement + currentElement,currentElement);
+            result = Math.max(maxEndWithCurrentElement, result);
+        }
+        return result;
+
+    }
+
+    /**
+     * 二位矩阵的最大子矩阵和问题
+     *
+     * 算法过程：
+     * 1.以列为左右边界，遍历所有的左右边界。
+     * 2.对于每一个左右边界，将同一行的数值全部相加，生成一个大小为行数的一维数组。这个数组的最大子序列和，即是在这个左右边界下最大的子矩阵和。
+     * 3.遍历所有情况，可得最大的子矩阵和
+     * @param matrix
+     * @return
+     */
+    private static int MaxSubMatrixSum(int[][] matrix){
+        if(matrix.length==0)
+            return 0;
+
+        int row = matrix.length;
+        int col = matrix[0].length;
+
+        int result = matrix[0][0];
+
+        for(int i = 0; i< col; i++){
+            int[] sumRow = new int[row];
+            for(int j = i; j<col; j++){
+                for(int h = 0; h<row; h++){
+                    sumRow[h] += matrix[h][j];
+                }
+
+                result = Math.max(result,MaxSubSequenceSumDP(sumRow));
+            }
+        }
+        return result;
+    }
+
 
     public static void main(String[] args) {
         int[] inputArray = new int[100];
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for(int i = 0; i<100; i++){
-            inputArray[i] = random.nextInt();
+            inputArray[i] = random.nextInt(12);
         }
         System.out.println(MaxSubSequenceSumRec(inputArray,0, inputArray.length-1));
         System.out.println(MaxSubSequenceSumLin(inputArray));
+        System.out.println(MaxSubSequenceSumDP(inputArray));
     }
 }
