@@ -10,3 +10,4 @@
 - LargestRectangleInHistogram 直方图中的最大矩形（一维、二维）
 - BinaryTreeIterativelyTraversal 二叉树的非递归遍历
 - RemoveDuplicateLetters 除去字符串中的重复字符且保证字典序最小
+- KthMagicNumber 第k个只有3、5、7素因子的magic number
