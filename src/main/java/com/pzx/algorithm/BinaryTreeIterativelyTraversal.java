@@ -1,4 +1,4 @@
-package com.pzx.ddsa;
+package com.pzx.algorithm;
 
 import java.util.ArrayList;
 import java.util.Deque;

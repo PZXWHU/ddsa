@@ -1,11 +1,9 @@
-package com.pzx.ddsa;
+package com.pzx.algorithm;
 
 import javafx.util.Pair;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 
 /**
  * 后缀表达式问题

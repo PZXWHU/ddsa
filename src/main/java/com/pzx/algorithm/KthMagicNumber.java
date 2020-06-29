@@ -1,4 +1,4 @@
-package com.pzx.ddsa;
+package com.pzx.algorithm;
 
 import java.util.HashSet;
 import java.util.PriorityQueue;
