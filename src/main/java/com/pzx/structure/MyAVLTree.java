@@ -8,8 +8,8 @@ import java.util.Queue;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * 二叉平衡树 插入删除递归版本
- * 非递归版本可能需要在节点类中增加parent指针，或者使用栈结构，用于插入之后更新高度、调整平衡
+ * 二叉平衡树，每个节点的左右子树高度差不能超过1，否则需要旋转来恢复平衡
+ * 插入删除递归版本，非递归版本可能需要在节点类中增加parent指针，或者使用栈结构，用于插入之后更新高度、调整平衡
  * @param <T>
  */
 public class MyAVLTree<T extends Comparable<? super T>> {
