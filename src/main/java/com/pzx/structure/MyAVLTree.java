@@ -8,8 +8,8 @@ import java.util.Queue;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * 二叉平衡树 递归版本
- * 非递归版本可能需要在节点类中增加parent指针，用于插入之后更新高度、调整平衡
+ * 二叉平衡树 插入删除递归版本
+ * 非递归版本可能需要在节点类中增加parent指针，或者使用栈结构，用于插入之后更新高度、调整平衡
  * @param <T>
  */
 public class MyAVLTree<T extends Comparable<? super T>> {
@@ -29,7 +29,7 @@ public class MyAVLTree<T extends Comparable<? super T>> {
     }
 
     /**
-     *
+     *二叉查找树插入（递归） +  插入之后平衡
      * @param element
      * @param treeNode
      * @return 返回插入后的子树的根节点
@@ -51,10 +51,10 @@ public class MyAVLTree<T extends Comparable<? super T>> {
 
     /**
      * 根据插入节点位置不同，使用不同的旋转：
-     * 1.左左  右旋转
-     * 2.右右  左旋转
-     * 3.左右  双次右旋  先左旋转后右旋转
-     * 4.右左  双次左旋  先右旋转再左旋转
+     * 1.左左  右旋转   （插入左孩子的左子树，与右子树不平衡）
+     * 2.右右  左旋转   （插入右孩子的右子树，与左子树不平衡）
+     * 3.左右  双次右旋  先左旋转后右旋转    （插入左孩子的右子树，与右子树不平衡）
+     * 4.右左  双次左旋  先右旋转再左旋转    （插入右孩子的左子树，与左子树不平衡）
      * @param treeNode
      * @return
      */
@@ -64,15 +64,15 @@ public class MyAVLTree<T extends Comparable<? super T>> {
 
         if(height(treeNode.left) - height(treeNode.right) > 1){
             if(height(treeNode.left.left) >= height(treeNode.left.right)){ //使用等于号是为了在删除元素时也能正确使用balance方法，添加元素时两者不可能会相同
-                treeNode = rotateWithLeftChild(treeNode);
+                treeNode = rightRotate(treeNode);
             }else {
-                treeNode = doubleRotateWithLeftChild(treeNode);
+                treeNode = leftAndRightRotate(treeNode);
             }
         }else if(height(treeNode.right) - height(treeNode.left) > 1){
             if(height(treeNode.right.right) >= height(treeNode.right.left)){//使用等于号是为了在删除元素时也能正确使用balance方法，添加元素时两者不可能会相同
-                treeNode = rotateWithRightChild(treeNode);
+                treeNode = leftRotate(treeNode);
             }else {
-                treeNode = doubleRotateWithRightChild(treeNode);
+                treeNode = rightAndLeftRotate(treeNode);
             }
         }
         treeNode.height = Math.max(height(treeNode.left), height(treeNode.right)) + 1;
@@ -80,7 +80,7 @@ public class MyAVLTree<T extends Comparable<? super T>> {
         return treeNode;
     }
 
-    private AVLTreeNode<T> rotateWithLeftChild(AVLTreeNode<T> treeNode){
+    private AVLTreeNode<T> rightRotate(AVLTreeNode<T> treeNode){
         AVLTreeNode<T> rotateNode = treeNode.left;
         treeNode.left = rotateNode.right;
         rotateNode.right = treeNode;
@@ -92,15 +92,15 @@ public class MyAVLTree<T extends Comparable<? super T>> {
     }
 
     /**
-     * 双旋转可由一次左旋加一次右旋组合而成
+     * 双旋转可由两次单旋转组合而成
      * @param treeNode
      * @return
      */
-    private AVLTreeNode<T> doubleRotateWithLeftChild(AVLTreeNode<T> treeNode){
-        treeNode.left = rotateWithRightChild(treeNode.left);
-        return rotateWithLeftChild(treeNode);
+    private AVLTreeNode<T> leftAndRightRotate(AVLTreeNode<T> treeNode){
+        treeNode.left = leftRotate(treeNode.left);
+        return rightRotate(treeNode);
     }
-    private AVLTreeNode<T> rotateWithRightChild(AVLTreeNode<T> treeNode){
+    private AVLTreeNode<T> leftRotate(AVLTreeNode<T> treeNode){
         AVLTreeNode<T> rotateNode = treeNode.right;
         treeNode.right = rotateNode.left;
         rotateNode.left = treeNode;
@@ -110,9 +110,9 @@ public class MyAVLTree<T extends Comparable<? super T>> {
 
         return rotateNode;
     }
-    private AVLTreeNode<T> doubleRotateWithRightChild(AVLTreeNode<T> treeNode){
-        treeNode.right = rotateWithLeftChild(treeNode.right);
-        return rotateWithRightChild(treeNode);
+    private AVLTreeNode<T> rightAndLeftRotate(AVLTreeNode<T> treeNode){
+        treeNode.right = rightRotate(treeNode.right);
+        return leftRotate(treeNode);
     }
 
     public void remove(T element){
@@ -121,14 +121,14 @@ public class MyAVLTree<T extends Comparable<? super T>> {
     }
 
     /**
-     * 二叉查找树的删除方法 + 删除之后调整平衡
+     * 二叉查找树的删除方法（递归） + 删除之后调整平衡
      * @param element
      * @param treeNode
      * @return 返回删除之后的子树根节点
      */
     private AVLTreeNode<T> remove(T element, AVLTreeNode<T> treeNode){
         if(treeNode == null)
-            return treeNode;
+            return treeNode;//删除节点不存在
 
         int compareResult = element.compareTo(treeNode.element);
         if(compareResult > 0){
@@ -136,8 +136,9 @@ public class MyAVLTree<T extends Comparable<? super T>> {
         }else if(compareResult < 0){
             treeNode.left = remove(element, treeNode.left);
         }else if(treeNode.left != null && treeNode.right != null){
-            treeNode.element = findMin(treeNode.right).element;
-            treeNode.right = remove(element, treeNode.right);
+            //treeNode.element = findMin(treeNode.right).element;
+            //treeNode.right = remove(element, treeNode.right);
+            treeNode.element = findAndRemoveRightSubTreeMin(treeNode).element;
         }else {
             treeNode = treeNode.left != null ? treeNode.left : treeNode.right;
         }
@@ -152,6 +153,35 @@ public class MyAVLTree<T extends Comparable<? super T>> {
         }
         return treeNode;
     }
+
+    /**
+     * 找到右子树中最小节点，返回并在子树中删除此节点
+     * @param parentTreeNode
+     * @return
+     */
+    private AVLTreeNode<T> findAndRemoveRightSubTreeMin(AVLTreeNode<T> parentTreeNode){
+        AVLTreeNode<T> minNode = null;
+        if(parentTreeNode != null && parentTreeNode.right != null){
+            if(parentTreeNode.right.left == null){
+                minNode = parentTreeNode.right;
+                parentTreeNode.right = remove(parentTreeNode.right.element, parentTreeNode.right);
+            }
+            else {
+                parentTreeNode = parentTreeNode.right;
+                while (parentTreeNode.left.left != null){
+                    parentTreeNode = parentTreeNode.left;
+                }
+                minNode = parentTreeNode.left;
+                parentTreeNode.left = remove(parentTreeNode.left.element, parentTreeNode.left);
+            }
+        }
+
+        return minNode;
+
+    }
+
+
+
 
     private AVLTreeNode<T> findMax(AVLTreeNode<T> treeNode){
         if(treeNode != null){
@@ -181,7 +211,9 @@ public class MyAVLTree<T extends Comparable<? super T>> {
         for(int i = 0; i<1000; i++){
             tree.insert(ThreadLocalRandom.current().nextInt(1000));
         }
-
+        for(int i = 0; i<500; i++){
+            tree.remove(ThreadLocalRandom.current().nextInt(1000));
+        }
         //层次遍历，是否符合平衡条件
         Queue<AVLTreeNode<Integer>> queue = new LinkedList<>();
         queue.offer(tree.root);
@@ -212,6 +244,8 @@ public class MyAVLTree<T extends Comparable<? super T>> {
             }
             node = node.right;
         }
+
+
 
     }
 
