@@ -26,7 +26,7 @@ public class BinaryTreeIterativelyTraversal {
      * @param root
      * @return
      */
-    private static List<Integer> preorderTraversal(TreeNode root) {
+    private static List<Integer> preOrderTraversal(TreeNode root) {
         List<Integer> result = new ArrayList<>();
         Deque<TreeNode> stack = new LinkedList<>();
         TreeNode node = root;
@@ -51,7 +51,7 @@ public class BinaryTreeIterativelyTraversal {
      * @param root
      * @return
      */
-    private List<Integer> inorderTraversal(TreeNode root) {
+    private List<Integer> inOrderTraversal(TreeNode root) {
         List<Integer> result = new ArrayList<>();
         Deque<TreeNode> stack = new LinkedList<>();
         TreeNode node = root;
@@ -86,7 +86,7 @@ public class BinaryTreeIterativelyTraversal {
      * @param root
      * @return
      */
-    public List<Integer> postorderTraversal(TreeNode root) {
+    public List<Integer> postOrderTraversal(TreeNode root) {
         Deque<TreeNode> stack = new LinkedList<>();
         List<Integer> result = new ArrayList<>();
         TreeNode node = root,lastVisitNode = null;
