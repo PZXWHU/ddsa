@@ -12,3 +12,4 @@
 - RemoveDuplicateLetters 除去字符串中的重复字符且保证字典序最小
 - KthMagicNumber 第k个只有3、5、7素因子的magic number
 - CreateTreeAccordingInOrder 已知中序遍历和前序或者后序遍历，求所构成的二叉树
+- TopKth top k问题 小顶堆和快排解决

@@ -8,6 +8,14 @@ public class Sort {
 
     /**
      * 快速排序递归写法
+     *
+     * 1.选择数组第一个元素为基准元素
+     * 2.右指针从右向左遍历，直到遇到小于基准元素
+     * 3.左指针从左向右遍历，直到遇到大于基准元素
+     * 4.交换两元素位置
+     * 5.重复2、3、4步，直到两指针相遇
+     * 6.两指针相遇处左边所有元素小于等于基准元素，右边所有元素大于等于基准元素，相遇处元素必然小于基准元素，所以将相遇位置的元素和基准元素交换位置
+     * 7.对相遇位置的左子数组和有子数组进行上述同样的操作
      * @param inputs
      * @param start
      * @param end
@@ -25,7 +33,6 @@ public class Sort {
             if(i < j){
                 swap(inputs, i, j);
             }
-
         }
         //指针相遇处的元素肯定小于基准元素，进行交换
         swap(inputs,start, i);
@@ -85,7 +92,7 @@ public class Sort {
 
     public static void main(String[] args) {
         int[] inputs = new int[]{3,5,6,8,15,4,1,5,7,3,6,8,2,5,7,8,4,8,9,1};
-        quickSortIteratively(inputs, 0 ,inputs.length -1);
+        quickSort(inputs, 0 ,inputs.length -1);
         for(int i : inputs){
             System.out.println(i);
         }
