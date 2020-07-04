@@ -1,10 +1,9 @@
-package com.pzx.structure;
+package com.pzx.structure.tree;
 
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 伸展树是一种自调整形式的二叉查找树,对元素的每一次访问，都将把元素移动到根节点，并且把访问路径上的节点都提高

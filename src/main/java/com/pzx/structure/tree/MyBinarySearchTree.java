@@ -1,4 +1,4 @@
-package com.pzx.structure;
+package com.pzx.structure.tree;
 
 import java.util.Deque;
 import java.util.LinkedList;

@@ -1,6 +1,5 @@
-package com.pzx.structure;
+package com.pzx.structure.tree;
 
-import javax.swing.tree.TreeNode;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -12,11 +11,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * 插入删除递归版本，非递归版本可能需要在节点类中增加parent指针，或者使用栈结构，用于插入之后更新高度、调整平衡
  * @param <T>
  */
-public class MyAVLTree<T extends Comparable<? super T>> {
+public class AVLTree<T extends Comparable<? super T>> {
 
     private AVLTreeNode<T> root;
 
-    public MyAVLTree() {
+    public AVLTree() {
     }
 
     private static <T> int height(AVLTreeNode<T> treeNode){
@@ -207,7 +206,7 @@ public class MyAVLTree<T extends Comparable<? super T>> {
     }
 
     public static void main(String[] args) {
-        MyAVLTree<Integer> tree = new MyAVLTree<>();
+        AVLTree<Integer> tree = new AVLTree<>();
         for(int i = 0; i<1000; i++){
             tree.insert(ThreadLocalRandom.current().nextInt(1000));
         }

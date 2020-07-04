@@ -1,4 +1,4 @@
-package com.pzx.structure;
+package com.pzx.structure.tree;
 
 /**
  * 参考：https://blog.csdn.net/shenchaohao12321/article/details/83243314
