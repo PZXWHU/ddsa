@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.LongToIntFunction;
 
 /**
@@ -22,7 +23,7 @@ public class Hilbert {
     private final int dimension; //空间维度
     private final int bits; //曲线阶数 同时也是点坐标的比特数
     private final int length; //Hilbert index的比特数
-    private final long maxCoordinate; //点坐标的最大值
+    private final int maxCoordinate; //点坐标的最大值
     private final long maxHilbertIndex; //Hilbert index的最大值
 
 
@@ -30,7 +31,7 @@ public class Hilbert {
         this.dimension = builder.dimension;
         this.bits = builder.bits;
         this.length = dimension * bits;
-        this.maxCoordinate = (1l << bits) - 1;
+        this.maxCoordinate = (1 << bits) - 1;
         this.maxHilbertIndex = (1L << length) - 1;
 
     }
@@ -66,21 +67,21 @@ public class Hilbert {
      * @param point a array represent N-dimension point，in fact the coordinates have to be integer in current version
      * @return Hilbert Index
      */
-    public long pointToHilbertIndex(long[] point) {
+    public long pointToIndex(int[] point) {
         Preconditions.checkArgument(point.length == dimension, "the input point must be " + dimension + "-dimension");
         for (long coordinate : point){
             Preconditions.checkArgument(coordinate <= maxCoordinate && coordinate >= 0, " the input point is out of range!");
         }
-        long[] transposedIndex = pointToTransposedIndex(point);
+        int[] transposedIndex = pointToTransposedIndex(point);
         long hilbertIndex = transposedIndexToHilbertIndex(transposedIndex);
         return hilbertIndex ;
     }
 
 
-    private long[] pointToTransposedIndex(long[] point) {
+    private int[] pointToTransposedIndex(int[] point) {
         final long M = 1L << (bits - 1);
         final int n = point.length; // n: Number of dimensions
-        final long[] x = Arrays.copyOf(point, n);
+        final int[] x = Arrays.copyOf(point, n);
         long p, q, t;
         int i;
         // Inverse undo
@@ -108,7 +109,7 @@ public class Hilbert {
         return x;
     }
 
-    private long transposedIndexToHilbertIndex(long[] transposedIndex) {
+    private long transposedIndexToHilbertIndex(int[] transposedIndex) {
         long b = 0;
         int bIndex = length - 1;
         long mask = 1L << (bits - 1);
@@ -130,10 +131,10 @@ public class Hilbert {
      * @param index Hilbert Index
      * @return a array represent N-dimension point，in fact the coordinates have to be integer in current version
      */
-    public long[] hilbertIndexToPoint(long index){
+    public int[] indexToPoint(long index){
         Preconditions.checkArgument(index <= maxHilbertIndex && index >= 0 ,"the input Hilbert Index is out of range!");
-        long[] transposeIndex = hilbertIndexToTransposeIndex(index);
-        long[] point = transposedIndexToPoint(transposeIndex);
+        int[] transposeIndex = hilbertIndexToTransposeIndex(index);
+        int[] point = transposedIndexToPoint(transposeIndex);
         return point;
     }
 
@@ -151,8 +152,8 @@ public class Hilbert {
      * @param index
      * @return
      */
-    private long[] hilbertIndexToTransposeIndex(long index) {
-        long[] x = new long[dimension];
+    private int[] hilbertIndexToTransposeIndex(long index) {
+        int[] x = new int[dimension];
         for (int idx = 0; idx < 64; idx++) {
             if ((index & (1L << idx)) != 0) {
                 int dim = (length - idx - 1) % dimension;
@@ -163,7 +164,7 @@ public class Hilbert {
         return x;
     }
 
-    private long[] transposedIndexToPoint(long[] x) {
+    private int[] transposedIndexToPoint(int[] x) {
         final long N = 2L << (bits - 1);
         // Note that x is mutated by this method (as a performance improvement
         // to avoid allocation)
@@ -195,12 +196,5 @@ public class Hilbert {
 
 
 
-    public static void main(String[] args) {
-
-        Hilbert hilbert = new Hilbert.Builder().dimension(3).bits(3).build();
-        System.out.println(hilbert.pointToHilbertIndex(new long[]{7,4,6}));
-        System.out.println(Arrays.toString(hilbert.hilbertIndexToPoint(34)));
-
-    }
 
 }

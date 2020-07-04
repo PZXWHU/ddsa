@@ -3,6 +3,7 @@ package com.pzx.structure.sfc;
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Zorder curve
@@ -12,7 +13,7 @@ public class Zorder {
     private final int dimension; //空间维度
     private final int bits; //曲线阶数 同时也是点坐标的比特数
     private final int length; //Hilbert index的比特数
-    private final long maxCoordinate; //点坐标的最大值
+    private final int maxCoordinate; //点坐标的最大值
     private final long maxZorderIndex; //Hilbert index的最大值
 
 
@@ -20,7 +21,7 @@ public class Zorder {
         this.dimension = builder.dimension;
         this.bits = builder.bits;
         this.length = dimension * bits;
-        this.maxCoordinate = (1l << bits) - 1;
+        this.maxCoordinate = (1 << bits) - 1;
         this.maxZorderIndex = (1L << length) - 1;
 
     }
@@ -56,7 +57,7 @@ public class Zorder {
      * @param point a array represent N-dimension point，in fact the coordinates have to be integer in current version
      * @return Zorder Index
      */
-    public long pointToZorderIndex(long[] point) {
+    public long pointToIndex(int[] point) {
         Preconditions.checkArgument(point.length == dimension, "the input point must be " + dimension + "-dimension");
         for (long coordinate : point){
             Preconditions.checkArgument(coordinate <= maxCoordinate && coordinate >= 0, " the input point is out of range!");
@@ -76,21 +77,15 @@ public class Zorder {
      * @param index
      * @return
      */
-    public long[] zorderIndexToPoint(long index){
+    public int[] indexToPoint(long index){
         Preconditions.checkArgument(index <= maxZorderIndex && index >= 0 ,"the input Zorder Index is out of range!");
-        long[] point = new long[dimension];
+        int[] point = new int[dimension];
         for(int i = 0; i<bits; i++){
             for(int j = dimension - 1; j >= 0; j--){
-                point[j] = (point[j] << 1) | ((index >>> ((bits - i - 1) * dimension + j)) & 1);
+                point[j] = (point[j] << 1) | (int)((index >>> ((bits - i - 1) * dimension + j)) & 1);
             }
         }
         return point;
     }
 
-
-    public static void main(String[] args) {
-        Zorder zorder = new Builder().dimension(2).bits(3).build();
-        System.out.println(zorder.pointToZorderIndex(new long[]{7,1}));
-        System.out.println(Arrays.toString(zorder.zorderIndexToPoint(29)));
-    }
 }
