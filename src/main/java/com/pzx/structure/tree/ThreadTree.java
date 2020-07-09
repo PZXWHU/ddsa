@@ -14,7 +14,7 @@ import java.util.List;
  *
  *参考：https://blog.csdn.net/jisuanjiguoba/article/details/81092812
  */
-public class MyThreadTree<T extends Comparable<? super T>> {
+public class ThreadTree<T extends Comparable<? super T>> {
 
 
     private ThreadTreeNode<T> root;

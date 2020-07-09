@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class MyBinarySearchTree<T extends Comparable<? super T>> {
+public class BinarySearchTree<T extends Comparable<? super T>> {
 
     private BinarySearchTreeNode<T> root;
 
@@ -132,7 +132,7 @@ public class MyBinarySearchTree<T extends Comparable<? super T>> {
     }
 
     public static void main(String[] args) {
-        MyBinarySearchTree<Integer> tree = new MyBinarySearchTree<>();
+        BinarySearchTree<Integer> tree = new BinarySearchTree<>();
         for(int i = 0; i<1000; i++){
             tree.insert(ThreadLocalRandom.current().nextInt(1000));
         }
