@@ -2,6 +2,7 @@ package com.pzx.structure.sfc;
 
 import com.google.common.base.Preconditions;
 import com.pzx.App;
+import com.sun.org.glassfish.external.amx.AMX;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,23 +12,91 @@ public class LoadOrderly {
 
     private Map<String, Integer> interiorPointMap = new HashMap<>();
     private Map<String, Integer> exteriorPointMap = new HashMap<>();
-    private final int dimension; //空间维度
-    private final int bits; //曲线阶数 同时也是点坐标的比特数
-    private final int length; //Hilbert index的比特数
-    private final int maxCoordinate; //点坐标的最大值
-    private final long maxIndex; //Hilbert index的最大值
+    private int dimension; //空间维度
+    private int bits; //曲线阶数 同时也是点坐标的比特数
+    private int maxCoordinate; //点坐标的最大值
+    private long maxIndex; //Hilbert index的最大值
 
+    private LoadOrderly(){
 
+    }
+    /*
     public LoadOrderly(int dimension, int bits) {
-        Preconditions.checkArgument( dimension * bits < 64);
+        Preconditions.checkArgument( dimension * bits < 64,"the inputs dimension and bits is so large that the max Hilbert index is beyond Long.Max_VALUE!");
         this.dimension = dimension;
         this.bits = bits;
-        this.length = dimension * bits;
         this.maxCoordinate = (1 << bits) - 1;
-        this.maxIndex = (1L << length) - 1;
+        this.maxIndex = (1L << dimension * bits) - 1;
+    }
+
+     */
+
+    public static LoadOrderly getInstanceFromCurveDegree(int dimension, int bits){
+        Preconditions.checkArgument( dimension * bits < 64,"the inputs dimension and bits is so large that the max Hilbert index is beyond Long.Max_VALUE!");
+        LoadOrderly loadOrderly = new LoadOrderly();
+        loadOrderly.dimension = dimension;
+        loadOrderly.bits = bits;
+        loadOrderly.maxCoordinate = (1 << bits) - 1;
+        loadOrderly.maxIndex = (1L << dimension * bits) - 1;
+        loadOrderly.insertExteriorBoundaryPoint();
+        return loadOrderly;
+    }
+
+    public static LoadOrderly getInstanceFromMaxCoordinate(int dimension, int maxCoordinate){
+        Preconditions.checkArgument( Math.pow(maxCoordinate + 1, dimension) - 1 <= Long.MAX_VALUE,"the inputs dimension and maxCoordinate is so large that the max Hilbert index is beyond Long.Max_VALUE!");
+        LoadOrderly loadOrderly = new LoadOrderly();
+        loadOrderly.dimension = dimension;
+        loadOrderly.bits = -1;//不用曲线阶数表示
+        loadOrderly.maxCoordinate = maxCoordinate;
+        loadOrderly.maxIndex = (long) Math.pow(maxCoordinate + 1, dimension) - 1;
+        loadOrderly.insertExteriorBoundaryPoint();
+        return loadOrderly;
+    }
+
+    /**
+     * 插入区域边界外的点，便于判断区域边界的点是否可执行
+     */
+    private void insertExteriorBoundaryPoint(){
+        int maxCoordinate = this.getMaxCoordinate();
+        int dimension = this.getDimension();
+
+        for(int i = 0; i<Math.pow(maxCoordinate + 3, dimension); i++){
+            int index = i;
+            int[] point = new int[dimension];
+            boolean isExteriorBoundaryPoint = false;
+            //除k取余法
+            for(int j = 0; j<dimension; j++){
+                point[j] = index % (maxCoordinate + 3) - 1;
+                index = index / (maxCoordinate + 3);
+                isExteriorBoundaryPoint = point[j] == -1 || point[j] == maxCoordinate + 1 ? true : isExteriorBoundaryPoint;
+            }
+            if (isExteriorBoundaryPoint){
+                insertExteriorPoint(point);
+            }
+
+        }
+        /*
+        for(int i = -1; i <= maxCoordinate + 1; i++){
+            for (int j = -1; j <= maxCoordinate + 1; j++){
+                if (i == -1 || i == (maxCoordinate + 1) || j == -1 || j == (maxCoordinate + 1))
+                    this.insertExteriorPoint(new int[]{i ,j });
+            }
+        }
+
+         */
     }
 
 
+    public void insertPoint(int[] point){
+        Preconditions.checkArgument(point.length == dimension,"the input point must be " + dimension + "-dimension");
+        for(int i = 0; i<dimension; i++){
+            if(point[i] < 0 || point[i] > maxCoordinate){
+                //insertExteriorPoint(point);
+                throw new RuntimeException("the input point is out of range!");
+            }
+        }
+        insertInteriorPoint(point);
+    }
 
     /**
      * 插入区域内部的点
@@ -41,7 +110,7 @@ public class LoadOrderly {
      *
      * @param point
      */
-    public void insertInteriorPoint(int[] point){
+    private void insertInteriorPoint(int[] point){
         Preconditions.checkArgument(point.length == dimension,"the input point must be " + dimension + "-dimension");
         insertPointToMap(point, interiorPointMap);
         executePossiblePoints(point);
@@ -53,7 +122,7 @@ public class LoadOrderly {
      * 插入区域周围的缓冲区中的点
      * @param point
      */
-    public void insertExteriorPoint(int[] point) {
+    private void insertExteriorPoint(int[] point) {
         insertPointToMap(point, exteriorPointMap);
     }
 
@@ -66,6 +135,8 @@ public class LoadOrderly {
         int intersectCellNum = 1;
         for(int i = 0; i < point.length; i++) {
             intersectCellNum *= Math.min(maxCoordinate, point[i] + 1) - Math.max( 0, point[i] - 1) + 1;
+            if (intersectCellNum <= 0)
+                return;
         }
         map.put(createPointKey(point), intersectCellNum);
     }
@@ -77,7 +148,7 @@ public class LoadOrderly {
      */
     private void executePossiblePoints(int[] point){
 
-        int[] bias = new int[]{-1,0,1};
+        int[] bias = new int[]{1,0,-1};
         int [] neighborPoint = new int[dimension];
         //对邻域中点依次进行检查
         for(int i = 0; i < Math.pow(3,dimension); i++){
@@ -174,128 +245,47 @@ public class LoadOrderly {
         averageMemoryConsumeRatio = (double)averageMemoryConsume / (maxIndex + 1);
     }
 
-
-    public static void main(String[] args) throws IOException {
-        int dimension = 2;
-        int bits = 2;
-        FileWriter writer = new FileWriter("10阶曲线比较.txt");
-        writer.write("加载方式,空间维度,曲线阶数,总点数,内存最大使用量,内存平均使用量,内存最大使用量占比,内存平均使用量占比" + "\n");
-
-        LoadOrderly loadOrderly = new LoadOrderly(dimension, bits);
-        insertBoundaryPoint(loadOrderly);
-
-        for(int i = 0; i < (1 << bits); i++) {
-            for (int j = 0; j < (1 << bits); j++) {
-                loadOrderly.insertInteriorPoint(new int[]{j, i});
-                printLoadOrderlyCurrentMemory(loadOrderly);
-            }
-        }
-        printLoadOrderlyMemoryConsume(loadOrderly,"顺序");
-        writeLoadOrderlyToFile(writer,loadOrderly,"顺序");
-
-        /*
-        -----------------------------------------------------------------------------------------
-         */
-
-        LoadOrderly loadOrderly1 = new LoadOrderly(dimension, bits);
-        Hilbert hilbert = new Hilbert.Builder().dimension(dimension).bits(bits).build();
-
-        insertBoundaryPoint(loadOrderly1);
-
-        for(int i = 0; i<= loadOrderly1.maxIndex; i++){
-            loadOrderly1.insertInteriorPoint(hilbert.indexToPoint(i));
-        }
-        printLoadOrderlyMemoryConsume(loadOrderly1,"hilbert");
-        writeLoadOrderlyToFile(writer,loadOrderly1,"hilbert");
-
-         /*
-        -----------------------------------------------------------------------------------------
-         */
-
-        LoadOrderly loadOrderly2 = new LoadOrderly(dimension, bits);
-        Zorder zorder = new Zorder.Builder().dimension(dimension).bits(bits).build();
-
-        insertBoundaryPoint(loadOrderly2);
-        for(int i = 0; i<= loadOrderly2.maxIndex; i++){
-            loadOrderly2.insertInteriorPoint(zorder.indexToPoint(i));
-        }
-        printLoadOrderlyMemoryConsume(loadOrderly2,"zorder");
-        writeLoadOrderlyToFile(writer,loadOrderly2,"zorder");
-
-         /*
-        -----------------------------------------------------------------------------------------
-         */
-
-        LoadOrderly loadOrderly3 = new LoadOrderly(dimension, bits);
-        insertBoundaryPoint(loadOrderly3);
-        List<int[]> list = new ArrayList<>();
-        for(int i = 0; i < (1 << bits); i++) {
-            for (int j = 0; j < (1 << bits); j++) {
-                list.add(new int[]{i, j});
-            }
-        }
-        Collections.shuffle(list);
-        for(int[] point : list){
-            loadOrderly3.insertInteriorPoint(point);
-        }
-
-        printLoadOrderlyMemoryConsume(loadOrderly3,"随机");
-        writeLoadOrderlyToFile(writer,loadOrderly3,"随机");
-
-         /*
-        -----------------------------------------------------------------------------------------
-         */
-
-        LoadOrderly loadOrderly4 = new LoadOrderly(dimension, bits);
-        insertBoundaryPoint(loadOrderly4);
-
-
-        int k = 1 << bits * dimension;
-
-        for(int i = 0; i <= 2 * (1 << bits) - 2; i++){
-            for(int j = 0;j<= i;j++){
-                if(j <= loadOrderly4.maxCoordinate && i - j <= loadOrderly4.maxCoordinate){
-                    loadOrderly4.insertInteriorPoint(new int[]{j,i-j});
-
-                }
-            }
-        }
-        printLoadOrderlyMemoryConsume(loadOrderly4,"斜方向顺序");
-        writeLoadOrderlyToFile(writer,loadOrderly4,"斜方向顺序");
-
-
-        writer.close();
+    public int getDimension() {
+        return dimension;
     }
 
-    private static void printLoadOrderlyMemoryConsume(LoadOrderly loadOrderly, String loadMode){
-        int bits = loadOrderly.bits;
-        int dimension = loadOrderly.dimension;
-
-        System.out.println("----------------------");
-        long totalPointNum = (long)Math.pow((1 << bits) +2, dimension);
-
-        System.out.println(loadMode);
-        System.out.println("所使用的总点数："+ totalPointNum);
-        System.out.println("区域范围内的点数(除去缓冲区的点数)：" +  (loadOrderly.maxIndex + 1));
-        System.out.println("内存最大使用量：" + loadOrderly.maxMemoryConsume);
-        System.out.println("内存最大使用量占区域内总点数的比值：" + loadOrderly.maxMemoryConsumeRatio);
-        System.out.println("内存平均使用量：" + loadOrderly.averageMemoryConsume);
-        System.out.println("内存平均使用量占区域内总点数的比值： " + loadOrderly.averageMemoryConsumeRatio);
+    public int getBits() {
+        return bits;
     }
 
-    private static void writeLoadOrderlyToFile(FileWriter writer,LoadOrderly loadOrderly,String loadMode) throws IOException{
-        writer.write(loadMode + ","+ loadOrderly.dimension +","+loadOrderly.bits +
-                ","+ (loadOrderly.maxIndex + 1)+","+ loadOrderly.maxMemoryConsume +","+loadOrderly.averageMemoryConsume
-                + "," + loadOrderly.maxMemoryConsumeRatio+","+loadOrderly.averageMemoryConsumeRatio + "\n");
+    public int getMaxCoordinate() {
+        return maxCoordinate;
     }
 
-    private static void printLoadOrderlyCurrentMemory(LoadOrderly loadOrderly){
-        int bits = loadOrderly.bits;
-        int dimension = loadOrderly.dimension;
-        for (int m = (1 << bits) -1; m >= 0; m--){
-            for (int n = 0; n <= (1 << bits) -1; n++){
+    public long getMaxIndex() {
+        return maxIndex;
+    }
 
-                System.out.printf("%4d", loadOrderly.interiorPointMap.get(loadOrderly.createPointKey(n,m)));
+    public int getMaxMemoryConsume() {
+        return maxMemoryConsume;
+    }
+
+    public double getAverageMemoryConsume() {
+        return averageMemoryConsume;
+    }
+
+    public double getMaxMemoryConsumeRatio() {
+        return maxMemoryConsumeRatio;
+    }
+
+    public double getAverageMemoryConsumeRatio() {
+        return averageMemoryConsumeRatio;
+    }
+
+
+
+    public void printLoadOrderlyCurrentMemory(){
+        int maxCoordinate = this.getMaxCoordinate();
+        int dimension = this.getDimension();
+        for (int m = maxCoordinate; m >= 0; m--){
+            for (int n = 0; n <= maxCoordinate; n++){
+
+                System.out.printf("%4d", this.interiorPointMap.get(this.createPointKey(n,m)));
             }
             System.out.println("");
         }
@@ -303,16 +293,19 @@ public class LoadOrderly {
 
     }
 
-    private static void insertBoundaryPoint(LoadOrderly loadOrderly){
-        int bits = loadOrderly.bits;
-        int dimension = loadOrderly.dimension;
-        for(int i = -1; i <= (1 << bits); i++){
-            for (int j = -1; j <= (1 << bits); j++){
-                if (i == -1 || i == (1 << bits) || j == -1 || j == (1 << bits))
-                    loadOrderly.insertExteriorPoint(new int[]{i ,j });
-            }
-        }
-    }
+    public void print3DLoadOrderlyCurrentMemory(){
+        int maxCoordinate = this.getMaxCoordinate();
+        int dimension = this.getDimension();
+        for (int m = 0; m <= maxCoordinate; m++){
+            for (int n = 0; n <= maxCoordinate; n++){
+                for (int k = 0; k<=maxCoordinate; k++)
 
+                System.out.printf("%4d", this.interiorPointMap.get(this.createPointKey(k,n,m)));
+            }
+            System.out.println("");
+        }
+        System.out.println("----------------------");
+
+    }
 
 }

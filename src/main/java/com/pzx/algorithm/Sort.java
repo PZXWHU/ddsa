@@ -1,13 +1,16 @@
 package com.pzx.algorithm;
 
 import java.awt.image.SampleModel;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Sort {
 
     /**
-     * 快速排序递归写法
+     * 指针交换法
+     * 快速排序递归写法,平均时间复杂度O（NlogN），最坏O（N^2）
      *
      * 1.选择数组第一个元素为基准元素
      * 2.右指针从右向左遍历，直到遇到小于基准元素
@@ -22,25 +25,56 @@ public class Sort {
      * @return
      */
     private static void quickSort(int[] inputs ,int start, int end){
-        if (inputs.length == 0 || start > end)
+        if (inputs.length == 0 || start >= end)
+            return ;
+
+        int i = start + 1;
+        int j = end;
+        while (i <= j){
+            while (i <= j && inputs[start] < inputs[j]) j--;
+            while (i <= j && inputs[i] < inputs[start]) i++;
+            if(i <= j)
+                swap(inputs, i++, j--);
+        }
+        //指针相遇处的元素肯定小于基准元素，进行交换
+        swap(inputs,start, j);
+
+        quickSort(inputs, start, j -1);
+        quickSort(inputs,j+1, end);
+
+    }
+
+    /**
+     * 挖坑填数法
+     *
+     * @param inputs
+     * @param start
+     * @param end
+     */
+    private static void quickSort1(int[] inputs ,int start, int end){
+        if (inputs.length == 0 || start >= end)
             return ;
 
         int i = start;
         int j = end;
+
         while (i < j){
-            while (i < j && inputs[start] <= inputs[j]) j--;
-            while (i < j && inputs[i] <= inputs[start]) i++;
+            while (i < j && inputs[start] < inputs[j]) j--;
             if(i < j){
-                swap(inputs, i, j);
+                inputs[i++] = inputs[j];
+            }
+            while (i < j && inputs[i] < inputs[start]) i++;
+            if(i < j){
+                inputs[j--] = inputs[i];
             }
         }
-        //指针相遇处的元素肯定小于基准元素，进行交换
-        swap(inputs,start, i);
 
-        quickSort(inputs, start, i -1);
-        quickSort(inputs,i+1, end);
+        inputs[j] = inputs[start];
 
+        quickSort1(inputs, start, i -1);
+        quickSort1(inputs,i+1, end);
     }
+
 
     /**
      *非递归快速排序
@@ -50,7 +84,7 @@ public class Sort {
      * @param end
      */
     private static void quickSortIteratively(int[] inputs ,int start, int end){
-        if (inputs.length == 0 || start > end)
+        if (inputs.length == 0 || start >= end)
             return ;
 
         Deque<Integer> stack = new LinkedList<>();
@@ -67,13 +101,13 @@ public class Sort {
                 }
             }
             //指针相遇处的元素肯定小于基准元素，进行交换
-            swap(inputs, start, i);
-            if(start < i-1){
+            swap(inputs, start, j);
+            if(start < j-1){
                 stack.push(start);
-                stack.push(i-1);
+                stack.push(j-1);
             }
-            if(i+1 < end){
-                stack.push(i+1);
+            if(j+1 < end){
+                stack.push(j+1);
                 stack.push(end);
             }
         }
@@ -91,11 +125,18 @@ public class Sort {
 
 
     public static void main(String[] args) {
-        int[] inputs = new int[]{3,5,6,8,15,4,1,5,7,3,6,8,2,5,7,8,4,8,9,1};
-        quickSort(inputs, 0 ,inputs.length -1);
-        for(int i : inputs){
-            System.out.println(i);
+        int[] inputs = new int[101];
+        ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
+
+        for (int i = 0; i<101; i++){
+            inputs[i] = threadLocalRandom.nextInt(100);
         }
+
+        quickSort1(inputs, 0 ,inputs.length -1);
+        System.out.println(Arrays.toString(inputs));
+        com.pzx.algorithm.sort.Sort.checkSort(inputs);
     }
+
+
 
 }

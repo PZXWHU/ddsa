@@ -108,6 +108,7 @@ public class BinaryHeap<T extends Comparable<? super T>> {
 
     /**
      * 将所有元素依次插入堆中，相当于对每个元素进行上滤操作
+     * 时间复杂度O（NlogN）
      * @param elements
      */
     private void heapInsert(T[] elements){
@@ -117,6 +118,7 @@ public class BinaryHeap<T extends Comparable<? super T>> {
 
     /**
      * 按任意顺序构建完全二叉树，然后从最后一个非叶子节点一直到根结点进行下滤操作
+     * 时间复杂度O（N）
      * @param elements
      */
     private void heapify(T[] elements){
@@ -126,7 +128,6 @@ public class BinaryHeap<T extends Comparable<? super T>> {
         for(T element : elements){
             array[i++] = element;
         }
-
         for(int j = currentSize / 2; j > 0; j--){
             percolateDown(j);
         }

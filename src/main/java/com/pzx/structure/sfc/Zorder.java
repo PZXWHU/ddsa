@@ -12,7 +12,7 @@ public class Zorder {
 
     private final int dimension; //空间维度
     private final int bits; //曲线阶数 同时也是点坐标的比特数
-    private final int length; //Hilbert index的比特数
+
     private final int maxCoordinate; //点坐标的最大值
     private final long maxZorderIndex; //Hilbert index的最大值
 
@@ -20,9 +20,8 @@ public class Zorder {
     public Zorder(Builder builder){
         this.dimension = builder.dimension;
         this.bits = builder.bits;
-        this.length = dimension * bits;
         this.maxCoordinate = (1 << bits) - 1;
-        this.maxZorderIndex = (1L << length) - 1;
+        this.maxZorderIndex = (1L << dimension * bits) - 1;
 
     }
 
@@ -88,4 +87,19 @@ public class Zorder {
         return point;
     }
 
+    public int getDimension() {
+        return dimension;
+    }
+
+    public int getBits() {
+        return bits;
+    }
+
+    public int getMaxCoordinate() {
+        return maxCoordinate;
+    }
+
+    public long getMaxZorderIndex() {
+        return maxZorderIndex;
+    }
 }
