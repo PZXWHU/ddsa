@@ -2,6 +2,8 @@ package com.pzx.algorithm.sort;
 
 import org.checkerframework.checker.units.qual.A;
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -10,6 +12,48 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class QuickSort {
 
+    /**
+     * 快排非递归写法
+     * @param inputs
+     * @param <T>
+     */
+    public static  <T extends Comparable<? super T>> void quickSortIteratively(T[] inputs){
+        if (inputs == null || inputs.length == 0)
+            return ;
+
+
+        Deque<Integer> stack = new LinkedList<>();
+        stack.push(0);stack.push(inputs.length - 1);
+        while (!stack.isEmpty())
+        {
+            int end = stack.poll(); int start = stack.poll();
+            T base = inputs[start];
+            int i = start;int j = end;
+            while (i < j){
+                while (i < j && base.compareTo(inputs[j]) < 0) j--;
+                if (i < j) inputs[i++] = inputs[j];
+                while (i < j && base.compareTo(inputs[i]) > 0) i++;
+                if(i < j) inputs[j--] = inputs[i];
+            }
+            //指针相遇处的元素肯定小于基准元素，进行交换
+            inputs[j] = base;
+            if(start < j-1){
+                stack.push(start);
+                stack.push(j-1);
+            }
+            if(j+1 < end){
+                stack.push(j+1);
+                stack.push(end);
+            }
+        }
+
+    }
+
+    /**
+     * 快排递归写法
+     * @param arr
+     * @param <T>
+     */
     public static <T extends Comparable<? super T>> void quickSort(T[] arr) {
         if (arr == null || arr.length == 0)
             return;
@@ -66,7 +110,6 @@ public class QuickSort {
         while (i < j){
             while (i < j && base.compareTo(inputs[j]) < 0) j--;
             if(i < j) inputs[i++] = inputs[j];
-
             while (i < j && base.compareTo(inputs[i]) > 0) i++;
             if(i < j) inputs[j--] = inputs[i];
         }
@@ -114,8 +157,6 @@ public class QuickSort {
         quickSort2(inputs,j+1, end);
 
     }
-
-
 
     private static <T extends Comparable<? super T>> void swap(T[] inputs, int i, int j){
         T temp = inputs[i];
