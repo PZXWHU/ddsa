@@ -37,7 +37,5 @@ public interface IGraph<E> {
 
     void breadthFirstSearch(E v, Consumer<E> consumer);//广度优先搜索遍历
 
-    public int[] dijkstra(E v);//查找源点到其它顶点的路径
-
 }
 

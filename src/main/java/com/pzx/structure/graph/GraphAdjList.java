@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  */
 public class GraphAdjList<E> implements IGraph<E> {
 
-    private Map<E, VertexNode<E>> vertices;
+    private Map<E, VertexNode<E>> vertices;//存储节点的一维数组
 
     public GraphAdjList() {
         this.vertices = new HashMap<>();
@@ -169,10 +169,7 @@ public class GraphAdjList<E> implements IGraph<E> {
 
     }
 
-    @Override
-    public int[] dijkstra(E v) {
-        return null;
-    }
+
 
     // 邻接表中表对应的链表的顶点
     private static class AdjacentNode<E> {

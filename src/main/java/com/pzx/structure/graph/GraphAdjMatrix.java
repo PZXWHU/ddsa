@@ -242,11 +242,7 @@ public class GraphAdjMatrix<E> implements IGraph<E> {
 
     }
 
-    // 实现Dijkstra算法
-    @Override
-    public int[] dijkstra(E v) {
-        return null;
-    }
+
 
     /**
      * 针对有向无圈图的拓扑排序
