@@ -175,17 +175,17 @@ public class GraphAdjMatrix<E> implements IGraph<E> {
 
         while (!stack.isEmpty()){
             E peekVex = stack.peek();
-            boolean needPoll = true;
+            boolean needPop = true;
             for(E vertex : vertices){
                 if(!visitedVertices.contains(vertex) && edges.get(peekVex).containsKey(vertex)){
                     stack.push(vertex);
                     visitedVertices.add(vertex);
                     consumer.accept(vertex);
-                    needPoll = false;
+                    needPop = false;
                     break;
                 }
             }
-            if (needPoll)
+            if (needPop)
                 stack.pop();
         }
 
