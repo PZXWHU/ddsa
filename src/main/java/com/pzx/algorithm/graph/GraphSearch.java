@@ -5,6 +5,8 @@ import java.util.concurrent.Delayed;
 
 /**
  * 图的深度优先遍历和广度优先遍历
+ * 对于邻接矩阵表示的图，DFS和BFS的时间复杂度均为O（V^2），因为对于每一个遍历的点，都需要再遍历所有的点以查找其邻接点。
+ * 对于邻接表表示的图，DFS和BFS的时间复杂度均为O（E + V），因为对于每一个便利的点，只需要遍历邻接表中储存的边即可获得其邻接点
  */
 public class GraphSearch {
 
@@ -82,6 +84,13 @@ public class GraphSearch {
         return bfsSort.stream().mapToInt(Integer::intValue).toArray();
     }
 
+    /**
+     * 当队列未空时，出队列，并将出队元素的所有未访问邻接节点入队列，并标记为已访问。
+     * @param adjMatrix
+     * @param vertexIndex
+     * @param isVisited
+     * @param bfsSort
+     */
     private static void bfs(int[][] adjMatrix, int vertexIndex, boolean[] isVisited, List<Integer> bfsSort){
         Queue<Integer> queue = new LinkedList<>();
         bfsSort.add(vertexIndex);
