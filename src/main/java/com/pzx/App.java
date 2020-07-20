@@ -1,5 +1,6 @@
 package com.pzx;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 
 import java.lang.reflect.Array;
@@ -13,8 +14,13 @@ public class App
 {
     public static void main( String[] args )
     {
+        List<Integer> lists =  Lists.newArrayList(1,2,3,4,5,6,7,7,6);
+        Spliterator<Integer> spliterator = lists.spliterator();
+        Spliterator<Integer> spliterator1 = spliterator.trySplit();
 
-
+        spliterator.forEachRemaining(System.out::println);
+        System.out.println("-------");
+        spliterator1.forEachRemaining(System.out::println);
 
     }
 
