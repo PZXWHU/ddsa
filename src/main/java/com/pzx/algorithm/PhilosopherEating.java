@@ -11,6 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 哲学家进餐问题
+ * 有限资源的竞争问题
  */
 public class PhilosopherEating {
 
@@ -32,8 +33,8 @@ public class PhilosopherEating {
         private final static int HUNGRY = 1;
         private final static int EATING = 2;
         private final static Lock lock;
-        private static int[] state;
-        private static Semaphore[] semaphores;
+        private static final int[] state;
+        private static final Semaphore[] semaphores;
 
         static {
             lock = new ReentrantLock();
