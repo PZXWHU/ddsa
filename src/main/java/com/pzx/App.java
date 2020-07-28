@@ -22,6 +22,7 @@ public class App
         System.out.println("-------");
         spliterator1.forEachRemaining(System.out::println);
 
+
     }
 
     class A{
