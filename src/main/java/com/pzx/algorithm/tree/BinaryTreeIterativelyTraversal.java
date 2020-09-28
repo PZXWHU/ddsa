@@ -235,4 +235,62 @@ public class BinaryTreeIterativelyTraversal {
     }
 
 
+
+
+
+
+
+    public List<Integer> DFS(TreeNode root){
+        List<Integer> list = new ArrayList<>();
+        dfs(root, list);
+        return list;
+
+    }
+    private void dfs(TreeNode root,List<Integer> list ) {
+        if (root == null) return;
+        list.add(root.val);
+
+        //如果是回溯算法，则在这需要进行状态改变
+        dfs(root.left, list);
+        //如果是回溯算法，中间需要不需要状态恢复，然后再改变，需要根据实际情况判断
+        dfs(root.right, list);
+        //如果是回溯算法，则在这需要进行状态恢复
+    }
+
+    public List<Integer> DFSIteratively(TreeNode root){
+        if (root == null) return null;
+        List<Integer> res = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        stack.add(root);
+        while(!stack.empty()) {
+            TreeNode node = stack.pop();
+            res.add(node.val);
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+        }
+        return res;
+    }
+
+    public List<Integer> BFSIteratively(TreeNode root){
+        Queue<TreeNode> queue = new LinkedList<>();
+        List<Integer> list = new ArrayList<>();
+        queue.offer(root);
+        while(!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            list.add(node.val);
+            if (node.left != null) {
+                queue.add(node.left);
+            }
+            if (node.right != null) {
+                queue.add(node.right);
+            }
+        }
+
+        return list;
+    }
+
 }

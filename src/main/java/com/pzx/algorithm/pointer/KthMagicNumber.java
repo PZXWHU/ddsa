@@ -1,4 +1,4 @@
-package com.pzx.algorithm;
+package com.pzx.algorithm.pointer;
 
 import java.util.HashSet;
 import java.util.PriorityQueue;

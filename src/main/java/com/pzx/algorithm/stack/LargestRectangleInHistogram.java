@@ -1,4 +1,4 @@
-package com.pzx.algorithm;
+package com.pzx.algorithm.stack;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;

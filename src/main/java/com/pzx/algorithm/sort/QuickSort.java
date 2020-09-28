@@ -21,7 +21,6 @@ public class QuickSort {
         if (inputs == null || inputs.length == 0)
             return ;
 
-
         Deque<Integer> stack = new LinkedList<>();
         stack.push(0);stack.push(inputs.length - 1);
         while (!stack.isEmpty())
@@ -57,7 +56,7 @@ public class QuickSort {
     public static <T extends Comparable<? super T>> void quickSort(T[] arr) {
         if (arr == null || arr.length == 0)
             return;
-        quickSort2(arr, 0, arr.length - 1);
+        quickSort(arr, 0, arr.length - 1);
     }
 
     /**
@@ -77,11 +76,20 @@ public class QuickSort {
         T base = inputs[start];
         int i = start + 1;//必须为start + 1
         int j = end;
+        /*
         while (true){
             while (j >= start && base.compareTo(inputs[j]) < 0) j--;
             while(i <= end && base.compareTo(inputs[i]) > 0) i++;
             if(i >= j) break;
             swap(inputs, i++, j--);
+        }
+
+         */
+        while (i <= j){
+            while (i <= j && base.compareTo(inputs[j]) < 0) j--;
+            while(i <= j && base.compareTo(inputs[i]) > 0) i++;
+            if(i <= j)
+                swap(inputs, i++, j--);
         }
 
         swap(inputs,start, j);
@@ -118,6 +126,34 @@ public class QuickSort {
         quickSort1(inputs, start, i -1);
         quickSort1(inputs,i+1, end);
     }
+
+    public void quickSort(int[] arr,int L,int R){
+        if (arr.length == 0) return;
+        int i = L;
+        int j = R;
+        int key = arr[(i + j)/2];
+        while (i <= j){
+            while (arr[i] < key)
+                i++;
+            while (arr[j] > key)
+                j--;
+            if (i <= j){
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+                i++;
+                j--;
+            }
+        }
+        //上面一个while保证了第一趟排序支点的左边比支点小，支点的右边比支点大了。
+        //“左边”再做排序，直到左边剩下一个数(递归出口)
+        if (L < j)
+            quickSort(arr,L,j);
+        //“右边”再做排序，直到右边剩下一个数(递归出口)
+        if(i < R)
+            quickSort(arr,i,R);
+    }
+
 
     /**
      * 三路快排，对于含有大量重复元素的数组运行速度较快
