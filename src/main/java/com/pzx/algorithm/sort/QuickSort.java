@@ -14,6 +14,7 @@ public class QuickSort {
 
     /**
      * 快排非递归写法
+     * 挖坑填数法
      * @param inputs
      * @param <T>
      */

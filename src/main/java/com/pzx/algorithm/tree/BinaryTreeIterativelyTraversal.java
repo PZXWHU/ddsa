@@ -250,13 +250,23 @@ public class BinaryTreeIterativelyTraversal {
         if (root == null) return;
         list.add(root.val);
 
-        //如果是回溯算法，则在这需要进行状态改变
         dfs(root.left, list);
-        //如果是回溯算法，中间需要不需要状态恢复，然后再改变，需要根据实际情况判断
         dfs(root.right, list);
-        //如果是回溯算法，则在这需要进行状态恢复
+
     }
 
+    /**
+     * 树的前序、中序、后序遍历属于特殊的DFS
+     *
+     * DFS的非递归实现（栈实现）一般有两种方式：
+     * 1、父节点只有在所有子节点遍历访问之后才出栈，即依靠栈中的父节点，再次访问下一个子节点
+     * 2、访问父节点时，将父节点出栈，将所有子节点全部入栈。之后对栈中的节点进行同样的操作。
+     *
+     * 两种方法访问节点中元素的时间也不相同：第一种在节点入栈之前访问，第二种在节点出栈时访问
+     *
+     * @param root
+     * @return
+     */
     public List<Integer> DFSIteratively(TreeNode root){
         if (root == null) return null;
         List<Integer> res = new ArrayList<>();

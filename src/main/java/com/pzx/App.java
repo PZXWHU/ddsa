@@ -12,44 +12,53 @@ import java.util.*;
  */
 public class App 
 {
-    public static void main( String[] args )
-    {
-        List<Integer> lists =  Lists.newArrayList(1,2,3,4,5,6,7,7,6);
-        Spliterator<Integer> spliterator = lists.spliterator();
-        Spliterator<Integer> spliterator1 = spliterator.trySplit();
+    public static void main( String[] args ) {
+        PriorityQueue<Integer> priorityQueue = new PriorityQueue<>((x,y)->Integer.compare(y, x));
 
-        spliterator.forEachRemaining(System.out::println);
-        System.out.println("-------");
-        spliterator1.forEachRemaining(System.out::println);
+        priorityQueue.add(1);
+        priorityQueue.add(2);
 
+        System.out.println(priorityQueue.poll());
 
     }
 
-    class A{
-        int a;int b;int c;int d;
+    public static boolean isValidSudoku(char[][] board) {
+        if(board == null || board.length == 0 || board[0].length ==0)
+            return false;
 
-        public A(int a, int b, int c, int d) {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-            this.d = d;
-        }
+        int[] row = new int[9];
+        int[] col = new int[9];
+        int[] grid = new int[9];
 
-        public int getA() {
-            return a;
-        }
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                if(board[i][j] == ',')
+                    continue;
+                int num = board[i][j] - '0';
 
-        public int getB() {
-            return b;
-        }
 
-        public int getC() {
-            return c;
-        }
+                if((row[i] >> (num - 1) & 1) == 1){
+                    System.out.println("i : "+i + "  j : " + j + "  num : " + num);
+                    return false;
+                }
 
-        public int getD() {
-            return d;
+                row[i] = row[i] | (1 << (num - 1));
+
+                /*
+                if((col[j] >> (num - 1) & 1) == 1)
+                    return false;
+                col[j] = col[j] | (1 << (num - 1));
+
+                int gridIndex = 3 * (i / 3) + j / 3;
+                if((grid[gridIndex] >> (num - 1) & 1) == 1)
+                    return false;
+                grid[gridIndex] = grid[gridIndex] | (1 << (num - 1));
+                */
+
+            }
+
         }
+        return true;
     }
 
 }

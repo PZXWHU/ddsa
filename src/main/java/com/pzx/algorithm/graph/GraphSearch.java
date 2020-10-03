@@ -65,6 +65,24 @@ public class GraphSearch {
         }
     }
 
+    private static void dfs1(int[][] adjMatrix, int vertexIndex, boolean[] isVisited, List<Integer> dfsSort){
+        Deque<Integer> stack = new LinkedList<>();
+        isVisited[vertexIndex] = true;
+        stack.push(vertexIndex);
+
+        while (!stack.isEmpty()){
+            int peekVertexIndex = stack.pop();
+            dfsSort.add(peekVertexIndex);
+            for(int i = 0; i < adjMatrix.length; i++){
+                if(adjMatrix[peekVertexIndex][i] != MAX_VALUE && !isVisited[i]){
+                    isVisited[i] = true;
+                    stack.push(i);
+                }
+            }
+
+        }
+    }
+
     /**
      * 1、构建数据结构记录访问过的节点
      * 2、遍历图中的所有节点，对每个节点进行宽度优先遍历
@@ -121,6 +139,6 @@ public class GraphSearch {
                 {MAX_VALUE,MAX_VALUE,MAX_VALUE,MAX_VALUE,MAX_VALUE,1,1,MAX_VALUE}
 
         };
-        System.out.println(Arrays.toString(BFS(matrix)));
+        System.out.println(Arrays.toString(DFS(matrix)));
     }
 }
