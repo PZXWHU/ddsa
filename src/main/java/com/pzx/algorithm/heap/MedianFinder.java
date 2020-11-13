@@ -110,26 +110,6 @@ public class MedianFinder {
     }
 
 
-    static class ArrayUtils {
-
-        private static Random rand = new Random();
-
-        public static  void swap(int[] a, int i, int j) {
-            int temp = a[i];
-            a[i] = a[j];
-            a[j] = temp;
-        }
-
-        public static void shuffle(int[] arr) {
-            int length = arr.length;
-            for (int i = length; i > 0; i--) {
-                int randInd = rand.nextInt(i);
-                swap(arr, randInd, i - 1);
-            }
-        }
-    }
-
-
     /**
      * 找到两个有序数组中的中位数
      * 双指针法，时间复杂度O（N）
@@ -173,6 +153,7 @@ public class MedianFinder {
 
     /**
      * 二分查找法，时间复杂度Log（N）
+     * https://www.cielyang.com/leetcode-4-%E5%AF%BB%E6%89%BE%E4%B8%A4%E4%B8%AA%E6%AD%A3%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0/
      * @param nums1
      * @param nums2
      * @return
@@ -220,6 +201,7 @@ public class MedianFinder {
 
     /**
      * 找出两个有序数组的中位数
+     * 切分数组
      * @param nums1
      * @param nums2
      * @return
@@ -280,7 +262,8 @@ public class MedianFinder {
      *
      * [2,3,4]，中位数是 3
      * [2,3]，中位数是 (2 + 3) / 2 = 2.5
-     * 给你一个数组 nums，有一个大小为 k 的窗口从最左端滑动到最右端。窗口中有 k 个数，每次窗口向右移动 1 位。你的任务是找出每次窗口移动后得到的新窗口中元素的中位数，并输出由它们组成的数组。
+     * 给你一个数组 nums，有一个大小为 k 的窗口从最左端滑动到最右端。窗口中有 k 个数，每次窗口向右移动 1 位。
+     * 你的任务是找出每次窗口移动后得到的新窗口中元素的中位数，并输出由它们组成的数组。
      *
      *
      * @param nums

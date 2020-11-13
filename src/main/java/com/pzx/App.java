@@ -5,6 +5,7 @@ import com.google.common.collect.Multiset;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Hello world!
@@ -12,13 +13,8 @@ import java.util.*;
  */
 public class App 
 {
-    public static void main( String[] args ) {
-        PriorityQueue<Integer> priorityQueue = new PriorityQueue<>((x,y)->Integer.compare(y, x));
+    public static void main( String[] args )throws Exception {
 
-        priorityQueue.add(1);
-        priorityQueue.add(2);
-
-        System.out.println(priorityQueue.poll());
 
     }
 
