@@ -24,7 +24,7 @@ public class BinaryHeap<T extends Comparable<? super T>> {
 
     /**
      * 给定数组创建堆有两种方法：
-     * heapInsert和heapify，两种时间复杂度均为O（N）
+     * heapInsert和heapify
      * @param elements
      */
     public BinaryHeap(T[] elements){
@@ -37,7 +37,7 @@ public class BinaryHeap<T extends Comparable<? super T>> {
     }
 
     /**
-     * 最坏情况下式logN，平均情况下是常数时间
+     * 最坏情况下是logN，平均情况下是常数时间
      * 上滤操作
      * 1、判断是否需要扩容
      * 2、在完全二叉树的下一个位置设置空穴，判断空穴的父节点是否小于当前插入元素
@@ -108,7 +108,7 @@ public class BinaryHeap<T extends Comparable<? super T>> {
 
     /**
      * 将所有元素依次插入堆中，相当于对每个元素进行上滤操作
-     * 时间复杂度O（N）
+     * 时间复杂度O（NlogN）
      * @param elements
      */
     private void heapInsert(T[] elements){
