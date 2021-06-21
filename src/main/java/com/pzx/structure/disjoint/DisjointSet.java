@@ -60,6 +60,7 @@ public class DisjointSet {
     public void union(int x, int y){
         int root1 = find(x);
         int root2 = find(y);
+        if(root1 == root2) return;
         if(s[root2] < s[root1])
             s[root1] = root2;
         else {
