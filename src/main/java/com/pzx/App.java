@@ -7,6 +7,7 @@ import com.google.common.eventbus.Subscribe;
 import org.checkerframework.checker.units.qual.A;
 import sun.nio.ch.DirectBuffer;
 import sun.nio.ch.FileChannelImpl;
+import sun.reflect.generics.tree.Tree;
 
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
@@ -20,6 +21,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * Hello world!
@@ -31,6 +33,9 @@ public class App
 
     public static void main(String[] args) throws IOException {
 
+        long sum = 0;
+        int k = 1;
+        k -=  sum * (k / sum);
     }
 
 }

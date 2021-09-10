@@ -129,7 +129,38 @@ public class QuickSort {
         quickSort1(inputs,i+1, end);
     }
 
+    public void swap(int[] list, int i, int pivot_index) {
+        int temp = list[i];
+        list[i] = list[pivot_index];
+        list[pivot_index] = temp;
+    }
+
+    /**
+     * 快排最佳写法
+     * @param arr
+     * @param L
+     * @param R
+     */
     public void quickSort(int[] arr,int L,int R){
+        if (arr.length == 0) return;
+        int i = L;
+        int pivotValue = arr[R];
+        for(int j = L; j <= R; j++){
+            if (arr[j] < pivotValue){
+                swap(arr, i, j);
+                i++;
+            }
+        }
+        swap(arr, R, i);
+        if (L < i)
+            quickSort(arr,L,i - 1);
+        //“右边”再做排序，直到右边剩下一个数(递归出口)
+        if(i < R)
+            quickSort(arr,i + 1,R);
+    }
+
+
+    public void quickSort1(int[] arr,int L,int R){
         if (arr.length == 0) return;
         int i = L;
         int j = R;
@@ -150,10 +181,10 @@ public class QuickSort {
         //上面一个while保证了第一趟排序支点的左边比支点小，支点的右边比支点大了。
         //“左边”再做排序，直到左边剩下一个数(递归出口)
         if (L < j)
-            quickSort(arr,L,j);
+            quickSort1(arr,L,j);
         //“右边”再做排序，直到右边剩下一个数(递归出口)
         if(i < R)
-            quickSort(arr,i,R);
+            quickSort1(arr,i,R);
     }
 
 

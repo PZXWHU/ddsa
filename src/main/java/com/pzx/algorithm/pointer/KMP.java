@@ -6,7 +6,7 @@ public class KMP {
 
 
     public static int strStr(String haystack, String needle){
-        int[] next = getNext(needle);
+        //int[] next = getNext(needle);
         int[] maxMatch = getMaxPrePostfixMatch(needle);
 
         int i = 0, j = 0;
@@ -15,11 +15,23 @@ public class KMP {
                 i++;j++;
             }else {
                 //i -= next[j];
-                i -= j == 0 ? -1 : maxMatch[j - 1];
-                j = 0;
+                //i -= j == 0 ? -1 : maxMatch[j - 1];
+                if (j == 0){
+                    i++;j++;
+                }else{
+                    j = maxMatch[j - 1];
+                }
+
             }
         }
         return j == needle.length() ? i - needle.length() : -1;
+    }
+
+    public static void main(String[] args) {
+        String s1 = "abcdefg";
+        String s2 = "def";
+
+        System.out.println(strStr(s1, s2));
     }
 
     public static int[] getNext(String s){
@@ -58,9 +70,4 @@ public class KMP {
     }
 
 
-
-
-    public static void main(String[] args) {
-
-    }
 }

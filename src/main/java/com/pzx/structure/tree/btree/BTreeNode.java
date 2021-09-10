@@ -37,19 +37,39 @@ public class BTreeNode<K extends Comparable<? super K>, V> {
     public void insert(K key, V value){
         if (isLeaf){
             routeTable.put(key, value);
+            mayUpdateKey(true);
             maySplit();
         }else {
-            BTreeNode<K, V> child = (BTreeNode<K, V>)routeTable.floorEntry(key).getValue();
+            Map.Entry<K, Object> entry = routeTable.floorEntry(key);
+            BTreeNode<K, V> child = (BTreeNode<K, V>)(entry == null ? routeTable.firstEntry().getValue() : entry.getValue());
             child.insert(key, value);
+        }
+    }
+
+    public void mayUpdateKey(boolean isInsert){
+        if (parent != null && routeTable.size() != 0){
+            K key = routeTable.firstKey();
+            Map.Entry<K, Object> entry = isInsert ? parent.getRouteTable().ceilingEntry(key) : parent.getRouteTable().floorEntry(key);
+            if (entry == null){
+                System.out.println(parent.getRouteTable() + "  " + routeTable);
+            }
+            if (entry == null || entry.getKey().compareTo(key) != 0){
+                parent.getRouteTable().remove(entry.getKey());
+                parent.getRouteTable().put(key, this);
+                parent.mayUpdateKey(isInsert);
+            }
         }
     }
 
     public void remove(K key){
         if (isLeaf){
             routeTable.remove(key);
+            mayUpdateKey(false);
             mayMerge();
         }else{
-            BTreeNode<K, V> child = (BTreeNode<K, V>)routeTable.floorEntry(key).getValue();
+            Map.Entry<K, Object> entry = routeTable.floorEntry(key);
+            if (entry == null) return;
+            BTreeNode<K, V> child = (BTreeNode<K, V>)entry.getValue();
             child.remove(key);
         }
     }
@@ -86,11 +106,16 @@ public class BTreeNode<K extends Comparable<? super K>, V> {
             iterator.remove();
             if (splitNodeKey == null) splitNodeKey = entry.getKey();
             splitNode.getRouteTable().put(entry.getKey(), entry.getValue());
+            if (entry.getValue() instanceof BTreeNode){
+                ((BTreeNode) entry.getValue()).parent = splitNode;
+            }
         }
 
         parent.getRouteTable().put(splitNodeKey, splitNode);
-        splitNode.next = this.next;
-        this.next = splitNode;
+        if (isLeaf){
+            splitNode.next = this.next;
+            this.next = splitNode;
+        }
         parent.maySplit();
     }
 
@@ -108,7 +133,6 @@ public class BTreeNode<K extends Comparable<? super K>, V> {
     };
 
     private void mergeNode(){
-        K curNodeKey = this.getRouteTable().firstKey();
         BTreeNode<K, V> leftBrotherNode = getLeftBrotherNode();
         BTreeNode<K, V> rightBrotherNode = getRightBrotherNode();
         if (leftBrotherNode == null && rightBrotherNode == null){
@@ -160,10 +184,15 @@ public class BTreeNode<K extends Comparable<? super K>, V> {
 
         for(Map.Entry<K, Object> entry : rightNode.getRouteTable().entrySet()){
             leftNode.getRouteTable().put(entry.getKey(), entry.getValue());
+            if (entry.getValue() instanceof BTreeNode){
+                ((BTreeNode) entry.getValue()).parent = leftNode;
+            }
         }
         K rightNodeKey = rightNode.getRouteTable().firstKey();
         leftNode.getParent().getRouteTable().remove(rightNodeKey);
-        leftNode.next = rightNode.next;
+
+        if (leftNode.isLeaf() && rightNode.isLeaf())
+            leftNode.next = rightNode.next;
     }
 
 
@@ -173,6 +202,11 @@ public class BTreeNode<K extends Comparable<? super K>, V> {
         leftNode.getRouteTable().remove(entry.getKey());
         K oldRightNodeKey = rightNode.getRouteTable().firstKey();
         rightNode.getRouteTable().put(entry.getKey(), entry.getValue());
+
+        //修改子节点
+        if (entry.getValue() instanceof BTreeNode){
+            ((BTreeNode) entry.getValue()).parent = rightNode;
+        }
 
         //修改父节点
         rightNode.getParent().getRouteTable().remove(oldRightNodeKey);
@@ -185,6 +219,11 @@ public class BTreeNode<K extends Comparable<? super K>, V> {
         Map.Entry<K, Object> entry = rightNode.getRouteTable().firstEntry();
         rightNode.getRouteTable().remove(entry.getKey());
         leftNode.getRouteTable().put(entry.getKey(), entry.getValue());
+
+        //修改子节点
+        if (entry.getValue() instanceof BTreeNode){
+            ((BTreeNode) entry.getValue()).parent = leftNode;
+        }
 
         //修改父节点
         K newRightNodeKey = rightNode.getRouteTable().firstKey();
@@ -224,6 +263,10 @@ public class BTreeNode<K extends Comparable<? super K>, V> {
         return parent;
     }
 
+    public void setParent(BTreeNode<K, V> parent) {
+        this.parent = parent;
+    }
+
     public boolean isLeaf() {
         return isLeaf;
     }
@@ -231,22 +274,5 @@ public class BTreeNode<K extends Comparable<? super K>, V> {
     public BTreeNode<K, V> getNext() {
         return next;
     }
-
-    /*public Map.Entry<K, Object> getMinEntry(){
-        return routeTable.firstEntry();
-    }
-
-    public Map.Entry<K, Object> getMaxEntry(){
-        return routeTable.lastEntry();
-    }
-
-    public Map.Entry<K, Object> getNextEntry(K key){
-        return routeTable.higherEntry(key);
-    }
-
-    public Map.Entry<K, Object> getLastEntry(K key){
-        return routeTable.lowerEntry(key);
-    }*/
-
 
 }

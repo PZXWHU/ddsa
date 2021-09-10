@@ -8,6 +8,10 @@
 7、拓扑排序
 8、二分查找
 9、滑动窗口
+10、树状数组、线段树、前缀和、差分 
+https://leetcode-cn.com/problems/corporate-flight-bookings/solution/gong-shui-san-xie-yi-ti-shuang-jie-chai-fm1ef/
+https://www.cnblogs.com/wAther/p/10600216.html
+https://blog.csdn.net/yuhaomogui/article/details/98643090?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control
 
 
 ## 栈的使用
@@ -16,7 +20,7 @@
 等候之后满足条件时的再次访问。这种一般用于全部元素入栈完之后，再一个一个出栈处理。
 比如利用栈记录访问路径，然后再对访问路径上的元素进行回溯处理。但有时也需要中途出栈某个元素，
 比如树的非递归遍历。
-2. 单调栈：栈中的元素一般是**需要满足一定规律，比如递增，递减**，
+2. 单调栈(经常适用于数据问题且保持一定大小顺序)：栈中的元素一般是**需要满足一定规律，比如递增，递减**，
 当入栈元素不满足规律时，要进行出栈操作，并进行处理。这种一般用于访问过程中一直入栈，
 当遇到不符要求的元素，则执行出栈操作。然后再继续进行入栈操作。
 3. 有时候栈需要添加一对元素，但是java没有好用的tuple类，所以可以分开两个元素连续入栈和连续出栈，
@@ -132,3 +136,16 @@ LC155. 最小栈  LC239. 滑动窗口最大值
 ## 整数之和 = target
 1、对于在于同一个数组中的，可以先排序，然后枚举 + 双指针
 2、对于在不同数组中的，可以分组 + 枚举 + 哈希表 
+
+## 树的根节点
+入度为0
+
+## 区间求和
+此处可以再总结一下（加粗字体为最佳方案）：
+数组不变，区间查询：**前缀和**、树状数组、线段树；
+数组单点修改，区间查询：**树状数组**、线段树；
+数组区间修改，单点查询：**差分**、线段树；
+数组区间修改，区间查询：**线段树**。
+
+## 回文串
+动态规划  双指针  KMP  最大下相同前后缀  拼接  字符串hash法

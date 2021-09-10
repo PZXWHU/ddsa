@@ -1,6 +1,8 @@
 package com.pzx.structure.tree.btree;
 
+import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 参考：https://blog.csdn.net/shenchaohao12321/article/details/83243314
@@ -62,12 +64,19 @@ public class BTree<K extends Comparable<? super K>, V> {
        root.remove(key);
        while (root.getRouteTable().size() == 1){
            Object o = root.getRouteTable().firstEntry().getValue();
-           if (o instanceof BTreeNode)
+           if (o instanceof BTreeNode){
                root = (BTreeNode<K, V>) o;
+           }else {
+               break;
+           }
        }
+       root.setParent(null);
+
     }
 
     public V find(K key){
+        if (root.getRouteTable().size() == 0) return null;
+
         BTreeNode<K, V> node = root;
         while (!node.isLeaf()){
             node = (BTreeNode<K, V>)node.getRouteTable().floorEntry(key).getValue();
@@ -76,6 +85,8 @@ public class BTree<K extends Comparable<? super K>, V> {
     }
 
     public List<V> scan(K min, K max){
+        if (root.getRouteTable().size() == 0) return Collections.EMPTY_LIST;
+
         BTreeNode<K, V> node = root;
         while (!node.isLeaf()){
             Map.Entry<K, Object> entry = node.getRouteTable().floorEntry(min);
@@ -83,7 +94,7 @@ public class BTree<K extends Comparable<? super K>, V> {
         }
         List<V> results = new ArrayList<>();
         while (node != null && node.getRouteTable().firstKey().compareTo(max) <= 0){
-            for(Map.Entry<K, Object> entry : node.getRouteTable().subMap(min, max).entrySet()){
+            for(Map.Entry<K, Object> entry : node.getRouteTable().subMap(min, true, max, true).entrySet()){
                 results.add((V)entry.getValue());
             }
             node = node.getNext();
@@ -118,8 +129,8 @@ public class BTree<K extends Comparable<? super K>, V> {
 
 
     public static void main(String[] args) {
-        BTree<Integer, Integer> bTree = new BTree<>(4);
-        bTree.insert(5,5);
+        BTree<Integer, Integer> bTree = new BTree<>(6);
+       /* bTree.insert(5,5);
         bTree.insert(10,10);
         bTree.insert(15,15);
         bTree.insert(20,20);
@@ -130,7 +141,41 @@ public class BTree<K extends Comparable<? super K>, V> {
         bTree.insert(32, 32);
         bTree.remove(26);
         bTree.printTree();
-        System.out.println(bTree.scan(7, 22));
+        System.out.println(bTree.scan(7, 22));*/
+
+       // List<Integer> insertSet = Arrays.asList(19, 38, 7, 7, 58, 80, 6, 41, 77, 55, 56, 77, 85, 93, 84, 35, 85, 72, 29, 34, 11, 37, 33, 89, 28, 75, 34, 33, 3, 85, 10, 52, 43, 33, 41, 42, 78, 22, 26, 62, 73, 62, 45, 0, 17, 16, 2, 44, 44, 85, 34, 40);
+        //List<Integer> insertSet = new ArrayList<>();
+        TreeSet<Integer> insertSet = new TreeSet<>();
+        try {
+           Random random = ThreadLocalRandom.current();
+           for(int i = 0; i < 100; i++){
+               int d = random.nextInt(10000);
+               insertSet.add(d);
+               bTree.insert(d, d);
+           }
+           Iterator<Integer> iterator = insertSet.iterator();
+           int i = 0;
+           while (iterator.hasNext()){
+               int next = iterator.next();
+               if (i++ % 2 == 0){
+                   bTree.remove(next);
+                   iterator.remove();
+               }
+
+           }
+
+
+           bTree.printTree();
+
+           System.out.println(bTree.scan(770, 1003));
+           System.out.println(insertSet.subSet(770,true, 1003, true));
+       }catch (RuntimeException e){
+           e.printStackTrace();
+           bTree.printTree();
+           //System.out.println(insertSet);
+       }
+
+
     }
 
 }
