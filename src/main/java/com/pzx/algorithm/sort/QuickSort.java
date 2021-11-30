@@ -136,7 +136,7 @@ public class QuickSort {
     }
 
     /**
-     * 快排最佳写法
+     * 快排最佳写法1
      * @param arr
      * @param L
      * @param R
@@ -159,16 +159,21 @@ public class QuickSort {
             quickSort(arr,i + 1,R);
     }
 
-
+    /**
+     * 快排最佳写法1
+     * @param arr
+     * @param L
+     * @param R
+     */
     public void quickSort1(int[] arr,int L,int R){
         if (arr.length == 0) return;
         int i = L;
         int j = R;
         int key = arr[(i + j)/2];
         while (i <= j){
-            while (arr[i] < key)
+            while (i <= j && arr[i] < key)
                 i++;
-            while (arr[j] > key)
+            while (i <= j && arr[j] > key)
                 j--;
             if (i <= j){
                 int temp = arr[i];

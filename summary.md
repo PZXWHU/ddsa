@@ -1,17 +1,29 @@
 算法类别：
-1、动态规划、递归、分治算法（一般和递归或者动态规划结合）
-2、双指针
+1、动态规划（有时候需要定义多个dp数组表示不同状态下的结果，进行转换）、递归、分治算法（一般和递归或者动态规划结合）
+2、双指针（有时候可以是多个指针，不一定就只是两个，但是每个指针也最多是遍历一次）
 3、贪心算法
 4、搜索（dfs、bfs）、回溯算法（dfs）、欧拉图
-5、单调栈、单调队列
+5、单调栈、单调队列（和大小顺序相关的问题）
 6、并查集
 7、拓扑排序
-8、二分查找
-9、滑动窗口
-10、树状数组、线段树、前缀和、差分 
+8、二分查找（当找不到解题方法时，还可以直接用二分查找来试探答案！！）
+9、滑动窗口（一般使用双指针实现,滑动窗口有时并不需要一直保持窗口内的元素符合要求，比如在求最大窗口时）
+10、树状数组、线段树、前缀和、差分 ：
+树状数组的奇妙用法：将数组元素设置为0或1，区间和可以表示范围内符合条件的元素个数
 https://leetcode-cn.com/problems/corporate-flight-bookings/solution/gong-shui-san-xie-yi-ti-shuang-jie-chai-fm1ef/
 https://www.cnblogs.com/wAther/p/10600216.html
 https://blog.csdn.net/yuhaomogui/article/details/98643090?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control
+11、前缀树
+12、状态压缩（暴力枚举）：https://leetcode-cn.com/problems/minimum-number-of-work-sessions-to-finish-the-tasks/solution/zhuang-ya-dpshi-shi-hou-xue-xi-yi-xia-li-q4mk/
+13、数学分析
+14、博弈（一般使用动态规划/递归解决）：
+https://leetcode-cn.com/problems/predict-the-winner/
+https://leetcode-cn.com/problems/guess-number-higher-or-lower-ii/
+https://leetcode-cn.com/problems/stone-game
+15、多线程控制顺序：
+（1）Lock + Condition + Flag
+（2）Flag + 空转/Thread.yield()
+（3）CountDownLatch / Semaphore
 
 
 ## 栈的使用
@@ -74,7 +86,7 @@ https://blog.csdn.net/yuhaomogui/article/details/98643090?utm_medium=distribute.
 将二维数组看成多个一维数组，下一行的数组状态至于上一行相关，那么将下一行数组直接写入上一行数组的位置，则不再需要创建二维数组
 但是在写入下一行数组时，不能覆盖掉还需要在后续使用的上一行数组值，则写入时可以从数组右向左写（按照实际情况判断）
 
-- dp问题有可能在某一个位置具有多种状态，所以可能需要多个数组，每个数组在相同位置考虑不同的状态。
+- **dp问题有可能在某一个位置具有多种状态，所以可能需要多个数组，每个数组在相同位置考虑不同的状态**
 状态转移时，下一位置需要根据不同情况从不同数组的上一位置推导。
 
 
@@ -148,4 +160,28 @@ LC155. 最小栈  LC239. 滑动窗口最大值
 数组区间修改，区间查询：**线段树**。
 
 ## 回文串
-动态规划  双指针  KMP  最大下相同前后缀  拼接  字符串hash法
+动态规划  双指针  KMP  最大相同前后缀  拼接  字符串hash法  中心扩展法
+
+## 连续元素和为0
+可计算前缀和，并使用哈希表进行记录，当出现两个相同的值时，其对应的索引下标之间的元素和就为0
+https://leetcode-cn.com/problems/remove-zero-sum-consecutive-nodes-from-linked-list/
+
+## 连续子数组问题
+1. 滑动窗口
+2. 前缀和
+
+## BFS求最短距离
+1. 从单节点向外扩散，找最短距离
+2. 多节点向内扩散，找最短距离
+
+## 字典序最小的子序列
+一般使用单调栈或者单调队列解决
+
+## 后序遍历
+后序遍历的逆序类似于前序遍历（父节点，右节点，左节点）
+
+## 持续生成范围减小的随机数
+1.基于数组 2.基于哈希表
+https://leetcode-cn.com/problems/random-flip-matrix/solution/sui-ji-fan-zhuan-ju-zhen-by-leetcode-sol-pfmr/
+
+

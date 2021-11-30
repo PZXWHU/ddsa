@@ -9,7 +9,7 @@ public class TreeArray {
     private int[] tree;
 
     public TreeArray(int[] arr){
-        tree = new int[arr.length];
+        tree = new int[arr.length + 1];
     }
 
     public int lowBit(int x) {
@@ -17,18 +17,16 @@ public class TreeArray {
     }
 
     public void add(int index, int k){
-        index += 1;
-        while (index <= tree.length){
-            tree[index - 1] += k;
+        while (index < tree.length){
+            tree[index] += k;
             index += lowBit(index);
         }
     }
 
     public int sum(int index){
-        index += 1;
         int sum = 0;
         while (index > 0){
-            sum += tree[index - 1];
+            sum += tree[index];
             index -= lowBit(index);
         }
 
